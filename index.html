@@ -52,20 +52,28 @@ function gotMovement(a) {
 
 }
 
-function shuffleNumber() {
-	var newNum = "Boom !! Boom !!" + getRandomInt(1,6) + "We got your movement";
-	document.querySelector("#die").innerHTML = newNum;
+function shuffleNumber() { //hides the shake div
+	var shaked = "Boom !! Boom !!" + "We got your movement";// edited by dileep
+	document.querySelector("#shake").innerHTML = shaked;
 }
 
-function getRandomInt(min, max) {
+
+function getRandomInt(min, max) { //Not used for now
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function hideAfterINterval() { // Added by Dileep
+	$("#shake").show().delay(3000).queue(function (next) {
+    $(this).hide();
+    next();
+});	
 }
 </script>
 <style>
 #die {
 	font-weight:bold;
 	font-family: Arial;
-	font-size: 6em;
+	font-size: 3em;
 	width:100%;
 	height:100%;
 	margin-left: auto;
@@ -77,7 +85,7 @@ function getRandomInt(min, max) {
 
 <body>
 
-<div id="die"></div>
+<div id="shake"></div>
 
 </body>
 </html
