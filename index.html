@@ -14,13 +14,23 @@ var moveCounter = 0;
 
 function onDeviceReady() {
   shuffleNumber();
-	navigator.accelerometer.watchAcceleration(gotMovement, errHandler,{frequency:200});	
+  if (window.DeviceOrientationEvent) {
+  navigator.accelerometer.watchAcceleration(gotMovement, errHandler,{frequency:200});	
+  console.log("DeviceOrientation is supported");
+}	
 }
 
 function errHandler(e) {
 	console.log("--- ERROR ---");
 	console.dir(e);
 }
+
+function stopWatch() {// Stop watching the acceleration. Call this while closing the application
+    if (watchID) {
+        navigator.accelerometer.clearWatch(watchID);
+        watchID = null;
+        }
+    }    
 
 function gotMovement(a) {
 	if(!lastX) {
@@ -43,7 +53,12 @@ function gotMovement(a) {
 
 	if(deltaX !=0 || deltaY != 0 || deltaZ != 0) console.log(deltaX,deltaY,deltaZ,moveCounter);
 
-	if(moveCounter > 1) { shuffleNumber(); moveCounter=0; }
+	if(moveCounter > 1) { 
+	shuffleNumber(); 
+	isItTiltedRight(lastX, a.x); //Result is bool
+	isItTiltedRight(lastX, a.x); //Result is bool
+	moveCounter=0; 
+	}
 
 	lastX = a.x;
 	lastY = a.y;
@@ -52,9 +67,9 @@ function gotMovement(a) {
 
 }
 
-function shuffleNumber() { //hides the shake div
-	var shaked = "Boom !! Boom !!" + " We got your movement";// edited by dileep
-	document.querySelector("#shake").innerHTML = shaked;
+function shuffleNumber() { //hides the shake div	
+	$("#shake").hide();
+	hideAfterInterval();
 }
 
 
@@ -62,15 +77,37 @@ function getRandomInt(min, max) { //Not used for now
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function hideAfterINterval() { // Added by Dileep
-	$("#shake").show().delay(3000).queue(function (next) {
-    $(this).hide();
+function isItTiltedRight(oldX,newX){ //To find whether tilted to right
+	bool titledRight = false;
+	if(oldX > newX) {
+		var shaked = "Boom !! Boom !!" + " We got your movement to right";// edited by dileep	
+		document.querySelector("#shake").innerHTML = shaked;
+		titledRight = true;
+		}
+	newX == 0 ? tiltedRight = false : titledRight = true;	
+	return titledRight;
+}
+
+function isItTiltedLeft(oldX,newX){ //To find whether tilted to right
+	bool titledLeft = false;
+	if(oldX < newX) {
+		var shaked = "Boom !! Boom !!" + " We got your movement to left";// edited by dileep	
+		document.querySelector("#shake").innerHTML = shaked;
+		titledLeft = true;
+		}
+	newX == 0 ? titledLeft = false : titledLeft = true;	
+	return titledLeft;
+}
+
+function hideAfterInterval() { // Added by Dileep
+	$("#shake").show();
+	$("#shake").hide().delay(3000).queue(function (next) {    
     next();
 });	
 }
 </script>
 <style>
-#die {
+#shake {
 	font-weight:bold;
 	font-family: Arial;
 	font-size: 3em;
